@@ -15,36 +15,29 @@ use Auth;
 
 class UserController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
 
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         try {
-            if (! $token = Auth::attempt($credentials)) {
+            if (! $token = JWTAuth::attempt($credentials)) {
                 return response()->json([
-                    "status" => 400,
                     "message" => "invalid credentials",
                     "data" => null
-                ]);
+                ], 400);
             }
         } catch (JWTException $e) {
             return response()->json([
-                "status" => 500,
                 "message" => "could not create token",
                 "data" => null
-            ]);
+            ], 500);
         }
 
         return response()->json([
-            "status" => 200,
             "message" => "User Success to Login",
             "data" => compact('token')
-        ]);
+        ], 200);
     }
 
     public function register(Request $request)
@@ -58,10 +51,9 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                "status" => 400,
                 "message" => $validator->errors(),
                 "data" => null
-            ]);
+            ], 400);
         }
 
         $user = User::create([
@@ -75,10 +67,9 @@ class UserController extends Controller
         $user->token = JWTAuth::fromUser($user);
 
         return response()->json([
-            "status" => 200,
             "message" => "User Success to Create",
             "data" => $user
-        ]);
+        ], 200);
     }
 
     public function getAuthenticatedUser()
@@ -86,9 +77,8 @@ class UserController extends Controller
         $user = Auth::user();
 
         return response()->json([
-            "status" => 200,
             "message" => "Data user success to get",
             "data" => $user
-        ]);
+        ], 200);
     }
 }

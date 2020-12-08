@@ -21,6 +21,8 @@ Route::namespace('API')->group(function () {
         Route::get('user', 'UserController@getAuthenticatedUser');
 
         Route::post('yoga-session/', 'YogaSessionController@store');
+        Route::put('yoga-session/{id}', 'YogaSessionController@update');
+        Route::delete('yoga-session/{id}', 'YogaSessionController@delete');
     });
 
     Route::get('yoga-session', 'YogaSessionController@index');
