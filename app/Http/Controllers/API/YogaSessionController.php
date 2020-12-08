@@ -46,7 +46,7 @@ class YogaSessionController extends Controller
         }
 
         $yogaSession = Session::create([
-            'userID' => Auth::user()->ID,
+            'userID' => auth()->user()->ID,
             'name' => $request->name,
             'description' => $request->description,
             'start' => $request->start,
@@ -77,40 +77,24 @@ class YogaSessionController extends Controller
             ], 400);
         }
 
-        $yogaSession = Session::find($id);
-
-        if ($yogaSession->userID != Auth::user()->ID) {
-            return response()->json([
-                "message" => "can't update other data session",
-                "data" => null
-            ], 400);
-        }
-
-        $yogaSession->ID = $yogaSession->ID;
-        $yogaSession->name = $request->name;
-        $yogaSession->description = $request->description;
-        $yogaSession->start = $request->start;
-        $yogaSession->duration = $request->duration;
-        $yogaSession->updated = Carbon::now()->toDateTimeString();
-        $yogaSession->save();
+        $user = auth()->user();
+        $user->session()->where('id', $id)
+            ->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'start' => $request->start,
+                'duration' => $request->duration
+            ]);
 
         return response()->json([
             "message" => "Success update data session",
-            "data" => $yogaSession
+            "data" => auth()->user()->session()->where('id', $id)->first()
         ], 200);
     }
 
     public function delete($id) {
-        $yogaSession = Session::find($id);
-
-        if ($yogaSession->userID != Auth::user()->ID) {
-            return response()->json([
-                "message" => "can't delete other data session",
-                "data" => null
-            ], 400);
-        }
-
-        $yogaSession->delete();
+        $user = auth()->user();
+        $user->session()->where('id', $id)->delete();
 
         return response()->json([
             "message" => "Success delete data session",

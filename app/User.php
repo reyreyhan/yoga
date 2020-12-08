@@ -49,4 +49,8 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims() {
         return [];
     }
+
+    public function session() {
+        return $this->hasOne(Session::class, 'userID', 'ID');
+    }
 }
