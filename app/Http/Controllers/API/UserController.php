@@ -3,17 +3,23 @@
 namespace App\Http\Controllers\API;
 
 use App\User;
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Carbon\Carbon;
 use JWTAuth;
+use Auth;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -77,7 +83,7 @@ class UserController extends Controller
 
     public function getAuthenticatedUser()
     {
-        $user = Auth::id();
+        $user = Auth::user();
 
         return response()->json([
             "status" => 200,
