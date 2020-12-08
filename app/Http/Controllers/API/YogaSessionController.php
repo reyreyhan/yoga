@@ -56,5 +56,11 @@ class YogaSessionController extends Controller
             'created' => Carbon::now()->toDateTimeString(),
             'updated' => Carbon::now()->toDateTimeString()
         ]);
+
+        return response()->json([
+            "status" => 200,
+            "message" => "Success create data session",
+            "data" => $yogaSession
+        ]);
     }
 }
